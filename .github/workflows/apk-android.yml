@@ -1,0 +1,63 @@
+# Compila el APK de Android en los servidores de GitHub (gratis) y lo publica en "Releases".
+# Se ejecuta solo cada vez que se suben cambios a main, o a mano desde la pestaña Actions.
+name: APK Android
+
+on:
+  push:
+    branches: [main]
+    paths: ['www/**', 'android/**', 'package.json', 'capacitor.config.json', '.github/workflows/apk-android.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Copiar la app web dentro del proyecto Android
+        run: npx cap sync android
+      - name: Preparar la llave de firma (desde los secretos)
+        env:
+          FIRMA_CLAVE: ${{ secrets.FIRMA_CLAVE }}
+          FIRMA_JKS: ${{ secrets.FIRMA_JKS }}
+        run: |
+          if [ -z "$FIRMA_CLAVE" ] || [ -z "$FIRMA_JKS" ]; then
+            echo "::error::Faltan los secretos FIRMA_CLAVE y/o FIRMA_JKS. Ve a Settings > Secrets and variables > Actions (instrucciones en el README)."
+            exit 1
+          fi
+          echo "$FIRMA_JKS" | tr -d ' \r\n' | base64 -d > android/app/nexo-guion.p12
+      - name: Compilar APK
+        working-directory: android
+        env:
+          FIRMA_CLAVE: ${{ secrets.FIRMA_CLAVE }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk ../nexo-guion.apk
+      - name: Leer versión
+        id: ver
+        run: echo "v=$(node -p "require('./www/version.json').version")" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nexo-guion-apk
+          path: nexo-guion.apk
+      - name: Publicar en Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.v }}
+          name: NEXO Guion ${{ steps.ver.outputs.v }}
+          body: "Descarga **nexo-guion.apk** desde el celular Android e instálala. Tus guiones no se borran al actualizar."
+          files: nexo-guion.apk
+          make_latest: true

@@ -1,0 +1,9 @@
+{
+  "appId": "co.nexopc.guion",
+  "appName": "NEXO Guion",
+  "webDir": "www",
+  "android": {
+    "adjustMarginsForEdgeToEdge": "force",
+    "allowMixedContent": false
+  }
+}

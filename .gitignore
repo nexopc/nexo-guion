@@ -1,0 +1,14 @@
+node_modules/
+android/app/build/
+android/build/
+android/.gradle/
+android/capacitor-cordova-android-plugins/build/
+android/local.properties
+android/app/src/main/assets/public/
+*.apk
+.DS_Store
+android/app/nexo-guion.jks
+android/app/nexo-guion.p12
+*.p12
+*.jks
+android/app/firma.properties

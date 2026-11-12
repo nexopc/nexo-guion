@@ -1,0 +1,26 @@
+{
+  "name": "nexo-guion",
+  "version": "1.0.0",
+  "description": "NEXO Guion: ideas y guiones de video de NEXO PC (offline)",
+  "scripts": {
+    "probar": "cd www && python3 -m http.server 8080",
+    "sync": "npx cap sync android"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^7.6.10",
+    "@capacitor/app": "^7.1.2",
+    "@capacitor/core": "^7.6.10",
+    "@capacitor/filesystem": "^7.1.9",
+    "@capacitor/share": "^7.0.4",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.6.10",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/sora": "^5.3.0"
+  },
+  "private": true
+}
