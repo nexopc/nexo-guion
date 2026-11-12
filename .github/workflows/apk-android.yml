@@ -28,24 +28,34 @@ jobs:
         run: npm ci
       - name: Copiar la app web dentro del proyecto Android
         run: npx cap sync android
-      - name: Preparar la llave de firma (desde los secretos)
+      # Si existen los secretos FIRMA_JKS y FIRMA_CLAVE, se firma con la llave fija de NEXO PC
+      # (las actualizaciones se instalan encima). Si no, se firma con una llave de prueba.
+      - name: Preparar la llave de firma (opcional)
+        id: firma
         env:
           FIRMA_CLAVE: ${{ secrets.FIRMA_CLAVE }}
           FIRMA_JKS: ${{ secrets.FIRMA_JKS }}
         run: |
-          if [ -z "$FIRMA_CLAVE" ] || [ -z "$FIRMA_JKS" ]; then
-            echo "::error::Faltan los secretos FIRMA_CLAVE y/o FIRMA_JKS. Ve a Settings > Secrets and variables > Actions (instrucciones en el README)."
-            exit 1
+          if [ -n "$FIRMA_CLAVE" ] && [ -n "$FIRMA_JKS" ]; then
+            echo "$FIRMA_JKS" | tr -d ' \r\n' | base64 -d > android/app/nexo-guion.p12
+            echo "tipo=release" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Sin secretos de firma: se crea un APK de prueba."
+            echo "tipo=debug" >> "$GITHUB_OUTPUT"
           fi
-          echo "$FIRMA_JKS" | tr -d ' \r\n' | base64 -d > android/app/nexo-guion.p12
       - name: Compilar APK
         working-directory: android
         env:
           FIRMA_CLAVE: ${{ secrets.FIRMA_CLAVE }}
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon
-          cp app/build/outputs/apk/release/app-release.apk ../nexo-guion.apk
+          if [ "${{ steps.firma.outputs.tipo }}" = "release" ]; then
+            ./gradlew assembleRelease --no-daemon
+            cp app/build/outputs/apk/release/app-release.apk ../nexo-guion.apk
+          else
+            ./gradlew assembleDebug --no-daemon
+            cp app/build/outputs/apk/debug/app-debug.apk ../nexo-guion.apk
+          fi
       - name: Leer versión
         id: ver
         run: echo "v=$(node -p "require('./www/version.json').version")" >> "$GITHUB_OUTPUT"
