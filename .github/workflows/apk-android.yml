@@ -2,10 +2,9 @@
 # Se ejecuta solo cada vez que se suben cambios a main, o a mano desde la pestaña Actions.
 name: APK Android
 
+# Ya NO se ejecuta solo: Cristóbal prefiere que Claude arme el APK y lo mande por el chat.
+# Si algún día lo necesitas, ejecútalo a mano desde la pestaña Actions.
 on:
-  push:
-    branches: [main]
-    paths: ['www/**', 'android/**', 'package.json', 'capacitor.config.json', '.github/workflows/apk-android.yml']
   workflow_dispatch:
 
 permissions:

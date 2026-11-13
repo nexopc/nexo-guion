@@ -1,10 +1,9 @@
 # Publica la app web (para el iPhone) en GitHub Pages: https://nexopc.github.io/nexo-guion/
 name: Web para iPhone
 
+# Ya NO se ejecuta solo: Cristóbal prefiere que Claude arme el APK y lo mande por el chat.
+# Si algún día lo necesitas, ejecútalo a mano desde la pestaña Actions.
 on:
-  push:
-    branches: [main]
-    paths: ['www/**', '.github/workflows/web-iphone.yml']
   workflow_dispatch:
 
 permissions:

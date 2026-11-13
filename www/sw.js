@@ -1,6 +1,6 @@
 /* Service worker: guarda la app en el celular para que abra SIN internet.
    Cambia VERSION cada vez que publiques cambios: así el celular baja la nueva. */
-const VERSION = 'nexo-guion-1.0.1';
+const VERSION = 'nexo-guion-1.0.2';
 const ARCHIVOS = [
   './', 'index.html', 'app.css', 'app.js', 'manifest.webmanifest',
   'vendor/jspdf.umd.min.js', 'vendor/html2canvas.min.js',

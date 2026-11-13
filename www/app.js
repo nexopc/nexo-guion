@@ -8,9 +8,9 @@
 
 /* ---------- 1. Configuración ---------- */
 const CONFIG = {
-  VERSION: '1.0.1',
-  // Dirección pública de la app (GitHub Pages). Se llena al publicar el repositorio.
-  WEB_URL: 'https://nexopc.github.io/nexo-guion/'
+  VERSION: '1.0.2'
+  // La app de Android no se conecta a ningún servidor: las versiones nuevas
+  // las arma Claude y te llegan como archivo APK por el chat.
 };
 const KEY = 'nexo-guion-db';            // nombre del "cajón" donde se guarda todo
 const isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
@@ -412,8 +412,8 @@ V.ajustes = () => {
       <span><i style="background:var(--c-send)"></i>WhatsApp</span><span><i style="background:var(--c-del)"></i>Borrar</span></div>
 
     <div class="sec-t">Actualizaciones</div>
-    <div class="card" style="font-size:13px;line-height:1.45;color:var(--muted)">Versión <b style="color:var(--fg)">${CONFIG.VERSION}</b>${isNative ? ' · Android' : ' · Web'}. La app funciona 100 % sin internet; con internet puede buscar versiones nuevas.</div>
-    <button class="btn b-neu" data-act="update">🔄 Buscar actualizaciones</button>
+    <div class="card" style="font-size:13px;line-height:1.45;color:var(--muted)">Versión <b style="color:var(--fg)">${CONFIG.VERSION}</b>${isNative ? ' · Android' : ' · Web'}. La app funciona 100 % sin internet${isNative ? ' y no se conecta a ningún servidor' : ''}.</div>
+    <button class="btn b-neu" data-act="update">${isNative ? 'ℹ Cómo actualizar' : '🔄 Buscar actualizaciones'}</button>
 
     <div class="sec-t">Zona peligrosa</div>
     <button class="btn b-del" data-act="wipe">Borrar todos los datos</button>
@@ -899,22 +899,19 @@ mq.addEventListener ? mq.addEventListener('change', () => { applyTheme(); if (cu
 /* ---------- 15. Actualizaciones ---------- */
 let swReg = null;
 async function buscarActualizacion() {
-  if (!navigator.onLine) { toast('Sin internet: lo intento cuando te conectes'); return; }
   if (!isNative) {
+    if (!navigator.onLine) { toast('Sin internet: lo intento cuando te conectes'); return; }
     if (!swReg) { toast('Tienes la última versión'); return; }
     await swReg.update().catch(() => {});
     setTimeout(() => { if (swReg.waiting) ofrecerRecarga(); else toast('✅ Tienes la última versión'); }, 1500);
     return;
   }
-  if (CONFIG.WEB_URL.includes('USUARIO')) { toast('Las actualizaciones se activan cuando la app esté publicada'); return; }
-  try {
-    const r = await fetch(CONFIG.WEB_URL + 'version.json?t=' + Date.now(), { cache: 'no-store' });
-    const j = await r.json();
-    if (cmpVer(j.version, CONFIG.VERSION) > 0) {
-      sheet(`<h3>Hay una versión nueva: ${esc(j.version)}</h3><p>${esc(j.notas || 'Mejoras y arreglos.')}</p><p>Tus guiones no se borran al actualizar.</p><button class="btn b-add" id="getApk">⬇ Descargar la nueva versión</button>`);
-      $('#getApk').onclick = () => { closeModal(); window.open(j.apk, '_blank'); };
-    } else toast('✅ Tienes la última versión');
-  } catch (e) { toast('No se pudo revisar ahora. Intenta más tarde.'); }
+  // Android: no se consulta ningún servidor (la app nunca se conecta a internet)
+  sheet(`<h3>Versión ${CONFIG.VERSION}</h3>
+    <p>Esta app no se conecta a ningún servidor. Cuando haya una versión nueva, Claude te manda el archivo <b>APK</b> por el chat.</p>
+    <p>Instálalo encima de esta: <b>tus guiones no se borran</b>.</p>
+    <button class="btn b-add" id="updOk">Entendido</button>`);
+  $('#updOk').onclick = closeModal;
 }
 const cmpVer = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); for (let i = 0; i < 3; i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0); } return 0; };
 function ofrecerRecarga() {
