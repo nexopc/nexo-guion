@@ -8,7 +8,7 @@
 
 /* ---------- 1. Configuración ---------- */
 const CONFIG = {
-  VERSION: '1.0.0',
+  VERSION: '1.0.1',
   // Dirección pública de la app (GitHub Pages). Se llena al publicar el repositorio.
   WEB_URL: 'https://nexopc.github.io/nexo-guion/'
 };
@@ -1021,6 +1021,17 @@ scr.addEventListener('keydown', ev => { if (ev.target.id === 'ideaIn' && ev.key 
 
 /* Botón "atrás" de Android */
 if (isNative && Plug('App')) Plug('App').addListener('backButton', () => { if (document.querySelector('.lock')) return; if (!back()) Plug('App').exitApp(); });
+
+/* ---------- 17b. Teclado: mantener visible lo que escribes ---------- */
+// Cuando sale el teclado la pantalla se encoge; movemos el campo activo al centro.
+function mostrarCampo() {
+  const el = document.activeElement;
+  if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) && !el.closest('.lock')) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+let kbT;
+addEventListener('resize', () => { clearTimeout(kbT); kbT = setTimeout(mostrarCampo, 120); });
+if (window.visualViewport) visualViewport.addEventListener('resize', () => { clearTimeout(kbT); kbT = setTimeout(mostrarCampo, 120); });
+document.addEventListener('focusin', () => setTimeout(mostrarCampo, 350));
 
 /* ---------- 18. Arranque ---------- */
 applyTheme();
