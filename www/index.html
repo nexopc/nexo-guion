@@ -20,16 +20,18 @@
 <body>
   <div id="app" class="app">
     <header class="top" id="top"></header>
+    <div id="pre"></div>
     <main class="scroll" id="screen"></main>
     <div class="footbar" id="foot" hidden></div>
     <nav class="tabs" id="tabs">
-      <button data-tab="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
-      <button data-tab="clientes"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c1.9.7 3.1 2.4 3.5 5.2"/></svg>Clientes</button>
-      <button data-tab="buscar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtrar</button>
-      <button data-tab="ajustes"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Ajustes</button>
+      <button data-tab="home"><span class="ti">🎬</span>Proyectos</button>
+      <button data-tab="clientes"><span class="ti">👥</span>Clientes</button>
+      <button data-tab="ganchos"><span class="ti">🪝</span>Ganchos</button>
+      <button data-tab="aprender"><span class="ti">🎓</span>Aprender</button>
     </nav>
     <button class="fab" id="fab" aria-label="Nueva idea"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></button>
     <div id="modal"></div>
+    <div id="wiz"></div>
     <div class="toast" id="toast" role="status"></div>
   </div>
   <!-- Zona oculta donde se arma el PDF antes de convertirlo -->
@@ -37,6 +39,8 @@
 
   <script src="vendor/jspdf.umd.min.js"></script>
   <script src="vendor/html2canvas.min.js"></script>
+  <script src="ganchos.js"></script>
+  <script src="aprender.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
